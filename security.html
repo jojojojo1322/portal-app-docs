@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security · Portal Notices for Jira Service Management</title>
+<meta name="description" content="Maintenance windows, outages and holiday hours on your customer portal — in every customer’s own time zone.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><a class="brand" href="index.html">Portal Notices for Jira Service Management</a><nav><a href="index.html">Overview</a><a href="getting-started.html">Getting started</a><a href="maintenance-windows.html">Maintenance windows</a><a href="faq.html">FAQ</a><a href="support.html">Support</a><a href="privacy.html">Privacy</a><a href="security.html" aria-current="page">Security</a><a href="terms.html">Terms</a></nav></header>
+<main>
+<h1 id="security">Security</h1>
+<h2 id="architecture">Architecture</h2>
+<ul><li>Built on <strong>Atlassian Forge</strong>. Code runs on Atlassian's infrastructure; there are no servers of ours.</li><li>Data is stored in <strong>Forge storage</strong> in your Atlassian cloud.</li><li><strong>No egress</strong>: the app declares no external domains and makes no calls outside Atlassian. It is eligible for Atlassian's "Runs on Atlassian" program.</li></ul>
+<h2 id="access-control">Access control</h2>
+<ul><li>Every management action is checked on the server against Jira permissions: help-center-wide notices require Jira admin; portal notices require admin of that service project. Showing or hiding a settings page is never treated as permission.</li><li>Project admins can only see and change notices of their own portal.</li><li>Customers can only record a close for a notice that is showing and is meant for them. Notices that can't be closed refuse it.</li><li>A customer's organizations are used only to decide what to show and are never sent to the browser.</li></ul>
+<h2 id="data-handling">Data handling</h2>
+<ul><li>Notice messages are rendered as text with a small, safe formatting set (bold, links, line breaks). No HTML or scripts from notice content ever run. Links must be http(s), mailto or a path on your own site.</li><li>Errors shown to admins never include internal details; details go only to the app's Forge logs.</li></ul>
+<h2 id="permissions-scopes">Permissions (scopes)</h2>
+<p>All Jira Service Management permissions are read-only.</p>
+<table><thead><tr><th>Scope</th><th>Why</th></tr></thead><tbody><tr><td>storage:app</td><td>Store notices and who closed them</td></tr><tr><td>read:jira-user, read:jira-work</td><td>Check that the person managing notices is a Jira or project admin</td></tr><tr><td>read:servicedesk:jira-service-management</td><td>List portals and match a project to its portal</td></tr><tr><td>read:requesttype:jira-service-management</td><td>Request type targeting</td></tr><tr><td>read:organization:jira-service-management</td><td>Customer organization targeting</td></tr></tbody></table>
+<h2 id="reporting-a-vulnerability">Reporting a vulnerability</h2>
+<p>Email bobob.dev@gmail.com with "Security" in the subject. We acknowledge within 72 hours and fix critical issues as a priority.</p>
+</main>
+<footer>© 2026 Bobob Apps · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="support.html">Support</a></footer>
+</body>
+</html>
