@@ -23,6 +23,8 @@ h2 { font-size: 22px; margin: 36px 0 8px; }
 h3 { font-size: 17px; margin: 24px 0 6px; }
 a { color: var(--accent); }
 code { padding: 1px 5px; border-radius: 4px; background: var(--soft); font-size: 0.9em; }
+pre { margin: 12px 0; padding: 12px 14px; border-radius: 10px; background: var(--soft); overflow-x: auto; font-size: 13px; line-height: 1.5; }
+pre code { padding: 0; background: none; font-size: inherit; }
 table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 15px; }
 th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
 .note { margin: 16px 0; padding: 12px 14px; border-radius: 10px; background: var(--note); }

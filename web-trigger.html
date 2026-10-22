@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Web trigger · Portal Notices &amp; Banners for Jira Service Management</title>
+<meta name="description" content="Maintenance windows, outages and holiday hours on your customer portal — in every customer’s own time zone.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><a class="brand" href="index.html">Portal Notices &amp; Banners for Jira Service Management</a><nav><a href="index.html">Overview</a><a href="getting-started.html">Getting started</a><a href="maintenance-windows.html">Maintenance windows</a><a href="web-trigger.html" aria-current="page">Web trigger</a><a href="faq.html">FAQ</a><a href="support.html">Support</a><a href="privacy.html">Privacy</a><a href="security.html">Security</a><a href="terms.html">Terms</a></nav></header>
+<main>
+<h1 id="start-and-end-notices-from-outside">Start and end notices from outside</h1>
+<p>The web trigger lets another tool show or end a notice for you: a status page that reports an outage, a monitoring alert, a Jira automation rule, or a script. The notice appears or disappears on the portal on customers' next page view.</p>
+<p>It can only <strong>start</strong> or <strong>end</strong> notices that you have allowed. It can't create, edit or delete anything, and it can't read your notices.</p>
+<h2 id="set-it-up-jira-admins">Set it up (Jira admins)</h2>
+<ol><li>In Jira, go to <strong>Settings → Apps → Portal Notices</strong> and choose <strong>Web trigger</strong> in the left column.</li><li>Copy the <strong>Trigger URL</strong>.</li><li>Choose <strong>Create token</strong>, then copy the token. It is shown <strong>only once</strong>; Portal Notices keeps just a fingerprint of it.</li><li>Open the notice you want to control and tick <strong>Can be started and ended by the web trigger</strong>. Save it.</li><li>Copy the notice's <strong>Notice ID</strong> from the same box. You send it with every call.</li></ol>
+<aside class="note">Project admins don't see the web trigger. Only Jira admins can create the token or allow a notice.</aside>
+<h2 id="call-it">Call it</h2>
+<p>Send a <code>POST</code> to the trigger URL with your token in the <code>X-Portal-Notices-Token</code> header and a JSON body:</p>
+<pre><code>curl -X POST "&lt;trigger URL&gt;" \
+  -H "X-Portal-Notices-Token: &lt;token&gt;" \
+  -H "Content-Type: application/json" \
+  -d '{"action":"start","notice":"&lt;notice ID&gt;"}'</code></pre>
+<ul><li><code>"action":"start"</code> shows the notice from now on. A notice that was ended (or archived) comes back.</li><li><code>"action":"end"</code> ends the notice now.</li></ul>
+<h2 id="jira-automation">Jira automation</h2>
+<p>In <strong>Project settings → Automation</strong>, add the action <strong>Send web request</strong>:</p>
+<ol><li><strong>Web request URL</strong>: the trigger URL.</li><li><strong>HTTP method</strong>: <code>POST</code>.</li><li><strong>Web request body</strong>: <strong>Custom data</strong>, with <code>{"action":"start","notice":"&lt;notice ID&gt;"}</code>.</li><li><strong>Headers</strong>: add <code>X-Portal-Notices-Token</code> with your token, and <code>Content-Type</code> with <code>application/json</code>.</li><li>Turn off <strong>Delay execution of subsequent rule actions until we've received a response</strong> if you don't need to wait.</li></ol>
+<p>Make a second rule (or a second action) with <code>"action":"end"</code> for when the incident is over. For example: *when an issue of type Incident moves to In Progress → start the outage notice; when it moves to Resolved → end it.*</p>
+<h2 id="status-pages-and-other-webhooks">Status pages and other webhooks</h2>
+<p>Any tool that can send an HTTP <code>POST</code> with a custom header and a JSON body works, for example a Grafana webhook contact point, an Uptime Kuma webhook notification or an Opsgenie webhook integration. Use the trigger URL, the <code>POST</code> method, the token header, and the body above.</p>
+<p>Some status page services can't add a custom header to their webhooks. For those, send the webhook to a Jira automation rule with an <strong>Incoming webhook</strong> trigger and let the rule call the web trigger with <strong>Send web request</strong>, as above.</p>
+<h2 id="what-the-answer-means">What the answer means</h2>
+<table><thead><tr><th>Answer</th><th>Meaning</th></tr></thead><tbody><tr><td>200</td><td>Done: the notice was started or ended.</td></tr><tr><td>403</td><td>Refused.</td></tr></tbody></table>
+<p>A refusal is always the same plain 403, on purpose, so nobody can learn from it which notices exist. Check these, in order:</p>
+<ul><li>The token is the current one (a replaced token stops working at once).</li><li>The notice ID is right and the notice has <strong>Can be started and ended by the web trigger</strong> ticked.</li><li><code>action</code> is exactly <code>start</code> or <code>end</code>, and the body is valid JSON under 2 KB.</li><li>You are under 30 calls per minute. Every call counts, including refused ones.</li></ul>
+<h2 id="replace-the-token">Replace the token</h2>
+<p>Choose <strong>Replace token</strong> under <strong>Web trigger</strong> and confirm. The old token stops working immediately, so update every tool that uses it. Do this whenever someone who knew the token leaves, or if it ends up somewhere it shouldn't.</p>
+<p>If you lose the token, make a new one the same way: the app can't show an old one again.</p>
+<h2 id="good-to-know">Good to know</h2>
+<ul><li>Keep the token secret, like a password. Anyone with the token and a notice ID can start or end that notice.</li><li>Only notices you ticked can be changed. A leaked token can't touch the others.</li><li>Starting a notice sets <strong>Show from</strong> to now and clears an end date that has already passed. Ending one sets <strong>Until</strong> to now.</li><li>The notice's last change is recorded as made by *web trigger*.</li></ul>
+</main>
+<footer>© 2026 Bobob Apps · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="support.html">Support</a></footer>
+</body>
+</html>
